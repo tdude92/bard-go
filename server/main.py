@@ -28,9 +28,9 @@ def allowed_file(filename):
 def home():
     return "Lol"
 
-@app.get('/api/emotions')
-def emotions():
-    return find_emotion(img_path="temp/sample1.jpg")
+@app.get('/api/emotions/<filename>')
+def emotions(filename):
+    return find_emotion(img_path=f"temp/{filename}")
 
 @app.route('/api/image', methods=['GET','POST'])
 def upload_file():
