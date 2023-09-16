@@ -1,10 +1,7 @@
 import os
 import psycopg2
-# from dotenv import load_dotenv
+from PIL import Image
 from flask import Flask, flash, redirect, url_for, send_from_directory, jsonify, request
-#from werkzeug import secure_filename
-
-# load_dotenv( )
 
 ROOT_FOLDER = os.path.dirname(__file__)
 UPLOAD_FOLDER = os.path.join(ROOT_FOLDER, "temp/")
@@ -13,8 +10,15 @@ print(ROOT_FOLDER)
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-# url = os.getenv("DATABASE_URL")
-# connection = psycopg2.connect(url)
+
+def delete_img(img_path):
+    print(img_path)
+    os.remove(os.path.relpath(img_path))
+        
+def find_emotion(img_path): # temp/image_name
+    # puts image into neural network to determine emotion
+    delete_img(img_path)
+    return "EMOTIONAL DAMAGE"
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -26,7 +30,7 @@ def home():
 
 @app.get('/api/emotions')
 def emotions():
-    return "emotions"
+    return find_emotion(img_path="temp/sample1.jpg")
 
 @app.route('/api/image', methods=['GET','POST'])
 def upload_file():
