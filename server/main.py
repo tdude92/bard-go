@@ -1,5 +1,4 @@
 import os
-import psycopg2
 from PIL import Image
 from flask import Flask, flash, redirect, url_for, send_from_directory, jsonify, request
 
