@@ -5,7 +5,7 @@ from flask import Flask, flash, redirect, url_for, send_from_directory, jsonify,
 
 ROOT_FOLDER = os.path.dirname(__file__)
 UPLOAD_FOLDER = os.path.join(ROOT_FOLDER, "temp/")
-ALLOWED_EXTENSIONS = {"jpg", "jpeg"}
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"}
 print(ROOT_FOLDER)
 
 app = Flask(__name__)
