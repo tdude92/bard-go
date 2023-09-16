@@ -10,6 +10,7 @@ import SwiftUI
 
 
 struct AutoSoundTrackView: View {
+    @ObservedObject var cameraModel = CameraDataModel()
     @ObservedObject var viewModel = AutoSoundtrackViewModel()
     var body: some View {
         CameraView()

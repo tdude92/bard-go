@@ -16,6 +16,7 @@ final class DataModel: ObservableObject {
 //    let photoCollection = PhotoCollection(smartAlbum: .smartAlbumUserLibrary)
     
     @Published var viewfinderImage: Image?
+    @Published var viewfinderCIImage: CIImage?
     @Published var thumbnailImage: Image?
     
     var isPhotosLoaded = false
@@ -25,18 +26,20 @@ final class DataModel: ObservableObject {
             await handleCameraPreviews()
         }
         
-//        Task {
-//            await handleCameraPhotos()
-//        }
+        //        Task {
+        //            await handleCameraPhotos()
+        //        }
     }
     
     func handleCameraPreviews() async {
         let imageStream = camera.previewStream
-            .map { $0.image }
 
         for await image in imageStream {
             Task { @MainActor in
-                viewfinderImage = image
+                // convert to Image type
+                viewfinderImage = image.image
+                // keep as CIImage type
+                viewfinderCIImage = image
             }
         }
     }

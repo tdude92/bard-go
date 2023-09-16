@@ -6,7 +6,7 @@
 //
 
 import Foundation
+import CoreImage
 
 struct AutoSoundtrackModel {
-    let name: String
 }
