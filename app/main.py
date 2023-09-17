@@ -17,7 +17,8 @@ user-read-playback-state,user-modify-playback-state"
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
 device_id = "aebd3ba2eda9d51d3f907d45e6e50ebe994b9253"
-soundtrack_playlist_url = "0OvyXIAjpkaryB8xvhBTiY"
+# soundtrack_playlist_url = "0OvyXIAjpkaryB8xvhBTiY"
+soundtrack_playlist_url = "3WLb9mqd56Yc5SxgsRUWmM"
 test_track_url = "6tpWeI6ijAmAHZJSVQu8Kn"
 
 ## UTILITY FUNCTIONS
@@ -102,6 +103,7 @@ cap = cv2.VideoCapture(0)  # 0 refers to the default camera
 
 # currently playing song id
 currentSong = ""
+rollingAvg = []
 
 with torch.no_grad():
     while True:
@@ -123,14 +125,22 @@ with torch.no_grad():
                 print(f"{cat}: {probs[idx]}")
                 emotion += np.array(emotion_cat2dim(cat))*probs[idx].item()
             print()
-            emotion_vector = (emotion[0], emotion[1])
+            
+            # add to rolling avg
+            rollingAvg.append(emotion)
+            if len(rollingAvg) >= 2:
+                rollingAvg.pop(0)
+            rollingAvgVal = sum(rollingAvg)/len(rollingAvg)
+            rollingAvgVal = (rollingAvgVal[0], rollingAvgVal[1])
+
             minId = ""
             minDist = 5
             for id, emo in getTrackToEmotions(soundtrack_playlist_url).items():
-                if math.dist(emotion_vector, emo) < minDist:
+                if math.dist(rollingAvgVal, emo) < minDist:
                     minId = id
-                    minDist = math.dist(emotion_vector, emo)
+                    minDist = math.dist(rollingAvgVal, emo)
 
+            # dont restart curr song
             if currentSong == minId:
                 pass
             else:
