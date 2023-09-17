@@ -17,8 +17,9 @@ user-read-playback-state,user-modify-playback-state"
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
 device_id = "aebd3ba2eda9d51d3f907d45e6e50ebe994b9253"
-# soundtrack_playlist_url = "0OvyXIAjpkaryB8xvhBTiY"
-soundtrack_playlist_url = "3WLb9mqd56Yc5SxgsRUWmM"
+# soundtrack_playlist_url = "0VMvtYQXdcuBIsmn7nFsCk"
+soundtrack_playlist_url = "0OvyXIAjpkaryB8xvhBTiY"
+# soundtrack_playlist_url = "3WLb9mqd56Yc5SxgsRUWmM"
 test_track_url = "6tpWeI6ijAmAHZJSVQu8Kn"
 
 ## UTILITY FUNCTIONS
@@ -82,7 +83,7 @@ def emotion_cat2dim(category: str) -> tuple[float, float]:
         valence, arousal = -0.1, 0.7
     elif category == "sadness":
         valence, arousal = -0.8, -0.7
-    return (valence, arousal)
+    return (valence/1.7+0.85, arousal/1.6+0.8)
 
 image_processor = transformers.ViTImageProcessor.from_pretrained("google/vit-large-patch16-224")
 model = transformers.ViTForImageClassification.from_pretrained("./model/")
@@ -125,20 +126,14 @@ with torch.no_grad():
                 print(f"{cat}: {probs[idx]}")
                 emotion += np.array(emotion_cat2dim(cat))*probs[idx].item()
             print()
-            
-            # add to rolling avg
-            rollingAvg.append(emotion)
-            if len(rollingAvg) >= 2:
-                rollingAvg.pop(0)
-            rollingAvgVal = sum(rollingAvg)/len(rollingAvg)
-            rollingAvgVal = (rollingAvgVal[0], rollingAvgVal[1])
+            emotion = (emotion[0], emotion[1])
 
             minId = ""
             minDist = 5
             for id, emo in getTrackToEmotions(soundtrack_playlist_url).items():
-                if math.dist(rollingAvgVal, emo) < minDist:
+                if math.dist(emotion, emo) < minDist:
                     minId = id
-                    minDist = math.dist(rollingAvgVal, emo)
+                    minDist = math.dist(emotion, emo)
 
             # dont restart curr song
             if currentSong == minId:
