@@ -10,10 +10,18 @@ import SwiftUI
 
 
 struct AutoSoundTrackView: View {
-    @ObservedObject var cameraModel = CameraDataModel()
-    @ObservedObject var viewModel = AutoSoundtrackViewModel()
+    
+//    @ObservedObject var cameraModel = CameraDataModel()
+    @ObservedObject var viewModel = AutoSoundtrackViewModel(serverBaseURL: "https://autosoundtrack.ingridqin.repl.co")
     var body: some View {
-        CameraView()
+        ZStack {
+//            CameraView()
+            Button("send req") {
+                Task {
+                    await viewModel.getEmotionVectorHTTP()
+                }
+            }
+        }
     }
 }
 
